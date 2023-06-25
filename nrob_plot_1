@@ -1,0 +1,56 @@
+   function g_1 = nrob_plot_1(g_1, r_1, view_vector, axis_scale, x_range, y_range, z_range)
+    N_DOFS = size(r_1.T, 3);
+    
+
+    % Create 3D axis vectors
+    X = [1; 0; 0];
+    Y = [0; 1; 0];
+    Z = [0; 0; 1];
+
+    figure;
+    hold on;
+    grid on;
+    axis equal
+    
+    xlim(x_range);
+    ylim(y_range);
+    zlim(z_range);
+    
+    view(view_vector);
+%     xlabel('X'); ylabel('Y'); zlabel('Z');
+%     title('Transformed 3D Axis');
+
+for i = 1:N_DOFS
+    % Extract rotation matrix
+    R = r_1.T(1:3, 1:3, i);
+
+    % Extract translation vector
+    t = r_1.T(1:3, 4, i);
+
+    % Transform vectors
+    X_transformed = R * X;
+    Y_transformed = R * Y;
+    Z_transformed = R * Z;
+
+    % Plot original point (origin)
+    plot3(t(1), t(2), t(3), 'ko');
+
+    % Plot transformed vectors
+    quiver3(t(1), t(2), t(3), X_transformed(1), X_transformed(2), X_transformed(3), axis_scale, 'g');
+    quiver3(t(1), t(2), t(3), Y_transformed(1), Y_transformed(2), Y_transformed(3), axis_scale, 'r');
+    quiver3(t(1), t(2), t(3), Z_transformed(1), Z_transformed(2), Z_transformed(3), axis_scale, 'b');
+end
+
+    % After updating quiver plots, get the end-effector position
+    end_effector_pos = r_1.T(1:3, 4, end);
+    
+    % Add text to the plot at the end effector's position
+    x_pos = end_effector_pos(1);
+    y_pos = end_effector_pos(2);
+    z_pos = end_effector_pos(3);
+    
+    plot3(x_pos, y_pos, z_pos, 'r.', 'MarkerSize', 20);
+    
+    drawnow;
+
+    end
